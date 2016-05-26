@@ -2,7 +2,7 @@
 
 import System.Exit
 import Text.Megaparsec
-import VariationalJava
+import VariationalCompiler
 import Data.Aeson
 import Data.ByteString.Lazy.Char8(ByteString, putStrLn)
 import Prelude hiding (putStrLn)

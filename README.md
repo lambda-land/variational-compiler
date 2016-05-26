@@ -16,9 +16,9 @@ ghc main.hs
 or
 
 ```bash
-ghci VariationalJava.hs
-*VariationalJava> parseFromFile vjProgram "test1.in.vjava"
-*VariationalJava> parseFromFile vjProgram "test2.in.vjava"
+ghci VariationalCompiler.hs
+*VariationalCompiler> parseFromFile vjProgram "test1.in.vjava"
+*VariationalCompiler> parseFromFile vjProgram "test2.in.vjava"
 ```
 
 ## Design questions

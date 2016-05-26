@@ -6,21 +6,8 @@ data Alternative = SelectLeft | SelectRight
 type Selection = (Dimension, Alternative)
 
 -- | Reduces a VJProgram given a list of choices.
--- >>> view [("x",ALeft)] [Dimension "x" [JavaSegment "hello"] [JavaSegment "world"]]
--- [JavaSegment "hello"]
---
--- >>> view [("DEBUG",ARight)] [Dimension "VERBOSE" [JavaSegment "print or something"] [JavaSegment "silence is golden"]]
--- [Dimension "VERBOSE" [JavaSegment "print or something"] [JavaSegment "silence is golden"]]
---
--- >>> view [("b",ALeft)] p1
--- [JavaSegment "hello",Dimension "a" [JavaSegment "something here"] [JavaSegment "there's this too"],JavaSegment "goodbye"]
 view :: [Selection] -> VJProgram -> VJProgram
 view cs = concatMap (viewSegment cs)
-
--- TODO: the Dimension data constructor should be called Choice
--- the Id in Dimension right now is actually the Dimension
--- what's currently called Choice is...whatever I want that's not taken already
--- Maybe a selector.
 
 -- | Reduces a VJSegment given a list of choices.
 viewSegment :: [Selection] -> VJSegment -> VJProgram
