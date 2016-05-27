@@ -1,7 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
+module VariationalCompiler.Parser where
 
-module VariationalCompiler where
-
+import VariationalCompiler.Entities
 import Control.Applicative (empty)
 import Control.Monad (void)
 import Text.Megaparsec
@@ -11,34 +10,9 @@ import Data.Scientific as Scientific
 import Data.Aeson
 import Data.Text(pack)
 
--- Abstract syntax
-
-data Region = Region [Segment] (Int, Int) (Int, Int)
-              deriving(Show)
-
-type Dimension = String
-data Segment = Choice Dimension Region Region
-             | Text String
-               deriving(Show)
-type Program = [Segment]
-
-
 toPoint :: (Int, Int) -> [Scientific]
 toPoint t = [toScientific (fst t), toScientific (snd t)]
         where toScientific i = scientific (fromIntegral i) 0
-
-instance ToJSON Segment where
-  toJSON (Text s) = object
-    [ "type" .= pack "java-segment"
-    , "content" .= s
-    ]
-
-  toJSON (Choice i l r) = object
-    [ "type" .= pack "dimension"
-    , "id" .= i
-    , "left" .= l
-    , "right" .= r
-    ]
 
 -- Parser
 
@@ -50,20 +24,24 @@ rword w = string w *> notFollowedBy alphaNumChar <* sc
 
 dimension :: Parser Segment
 dimension =
-  do s <- getPosition
-     rword "#dimension" <?> "Choice keyword"
+  do rword "#dimension" <?> "Choice keyword"
      name <- many alphaNumChar
-     p1 <- vjProgram
+     p1 <- vjRegion
      rword "#else" <?> "Else keyword"
-     p2 <- vjProgram
+     p2 <- vjRegion
      rword "#end" <?> "End keyword"
      e <- getPosition
-     return (Choice name p1 p2 (fromSourcePos s) (fromSourcePos e))
+     return (Choice name p1 p2)
   <?> "Choice node"
+
+vjRegion :: Parser Region
+vjRegion = do s <- getPosition
+              r <- vjProgram
+              e <- getPosition
+              return (Region r (fromSourcePos s) (fromSourcePos e))
 
 javaSegment :: Parser Segment
 javaSegment = do
-  b <- getPosition -- Get the position for the beginning of the segment
   s <- someTill anyChar
     (lookAhead
       (choice
@@ -71,8 +49,7 @@ javaSegment = do
         , void (string "#else" <?> "Else lookahead")
         , void (string "#end" <?> "End lookahead")
         , eof]))
-  a <- getPosition
-  return (Text (fromSourcePos b) (fromSourcePos a) s)
+  return (Text s)
 
 fromSourcePos :: SourcePos -> (Int, Int)
 fromSourcePos b = (sourceLine b,sourceColumn b)

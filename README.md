@@ -7,19 +7,12 @@ So far, we have a simple language definition and I/O setup, where programs can b
 ## How to run it
 
 ```bash
-cabal install megaparsec aeson
-ghc main.hs
-./main < test1.in.vjava
-./main < test2.in.vjava
+stack setup
+stack build
+# Parse a file with the compiler
+stack exec variational-compiler < testfiles/hello.vjava | aeson-pretty
 ```
 
-or
-
-```bash
-ghci VariationalCompiler.hs
-*VariationalCompiler> parseFromFile vjProgram "test1.in.vjava"
-*VariationalCompiler> parseFromFile vjProgram "test2.in.vjava"
-```
 
 ## Design questions
 
