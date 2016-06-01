@@ -26,19 +26,13 @@ dimension :: Parser Segment
 dimension =
   do rword "#dimension" <?> "Choice keyword"
      name <- many alphaNumChar
-     p1 <- vjRegion
+     p1 <- vjProgram
      rword "#else" <?> "Else keyword"
-     p2 <- vjRegion
+     p2 <- vjProgram
      rword "#end" <?> "End keyword"
      e <- getPosition
      return (Choice name p1 p2)
   <?> "Choice node"
-
-vjRegion :: Parser Region
-vjRegion = do s <- getPosition
-              r <- vjProgram
-              e <- getPosition
-              return (Region r (fromSourcePos s) (fromSourcePos e))
 
 javaSegment :: Parser Segment
 javaSegment = do

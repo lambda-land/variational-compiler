@@ -21,7 +21,9 @@ instance (ToJSON a, ToJSON b) => ToJSON (Either' a b) where
 main :: IO ()
 main = do
   maybeTree <- runParser vjProgram "stdin" <$> getContents
-  putStrLn (encode (E maybeTree))
+  putStrLn (encode (convert maybeTree))
   case maybeTree of
     Right _ -> exitSuccess
     Left _ -> exitWith (ExitFailure 1)
+  where convert (Left a)  = E (Left a)
+        convert (Right b) = E (Right (jsonPrepare b))

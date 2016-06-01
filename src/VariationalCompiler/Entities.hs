@@ -17,10 +17,9 @@ data Segment = Choice Dimension Region Region
              | Text String
                deriving(Show)
 
--- | A series of segments with information about the starting and 
---   ending location (Line, Column) of the segments in the program.
-data Region = Region [Segment] (Int, Int) (Int, Int)
-              deriving(Show)
+-- | Same as a program only logically means the region inside of 
+--   a variational statement
+type Region = [Segment]
 
 
 -- Selection
