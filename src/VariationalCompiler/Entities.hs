@@ -1,4 +1,6 @@
+{-# LANGUAGE DeriveGeneric #-}
 module VariationalCompiler.Entities where
+import GHC.Generics
 
 -- Abstract Syntax Tree
 
@@ -26,10 +28,9 @@ type Region = [Segment]
 -- Selection
 
 data Alternative = LeftBranch | RightBranch
-               deriving(Show)
+               deriving(Show, Generic)
 
 type Selection = (Dimension, Alternative)
 
 -- Projection (used when generating a view)
-newtype Projection = Proj (Program, [Selection])
-               deriving(Show)
+type Projection = (Program, [Selection])

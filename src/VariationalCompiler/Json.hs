@@ -3,7 +3,7 @@
 
 module VariationalCompiler.Json where
 
-import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region)
+import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region,Alternative)
 import Control.Monad.State.Class
 import Control.Monad.State
 import Control.Monad
@@ -70,9 +70,11 @@ instance ToJSON Segment' where
     toEncoding = genericToEncoding customOptions
 instance ToJSON Region' where -- Appears that if this wasn't set it would break all the lower ones
     toEncoding = genericToEncoding customOptions
+instance ToJSON Alternative
 
 instance FromJSON Segment' 
 instance FromJSON Region' 
+instance FromJSON Alternative
 
 jsonPrepare :: Program -> Program'
 jsonPrepare (P p) = case runState (regionPrepare p) [0,0] of
