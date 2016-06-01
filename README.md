@@ -1,5 +1,7 @@
 # The Variational Compiler
 
+https://github.com/RikkiGibson/variational-compiler
+
 The Variational Compiler is an extension of source code which supports variational declarations, statements, and expressions, similar to C preprocessor directives. The planned usage of this compiler is to power an Atom editor package which will help users write and edit variational programs. We've pulled in Megaparsec to generate a parser and Aeson for communication between the Atom front-end and this compiler.
 
 Since the last milestone, we've added a "view" function to reduce ASTs, and we've refined the AST definitions as well as what attributes are on the AST nodes. We have a simple language definition set up and 2 different executables with work over stdin and stdout. The variational-parser executable takes a source program as input and produces the variational AST encoded in JSON as output. The variational-view executable takes a JSON value representing the AST and projection used to reduce the AST, and produces the reduced AST.
@@ -7,7 +9,9 @@ Since the last milestone, we've added a "view" function to reduce ASTs, and we'v
 ## How to run it
 
 ```bash
-stack setup
+git clone https://github.com/RikkiGibson/variational-compiler.git
+cd variational-compiler
+stack setup # don't be alarmed if this takes a few minutes
 stack build
 # Parse a file with the compiler
 stack exec variational-compiler < testfiles/hello.vjava | aeson-pretty
