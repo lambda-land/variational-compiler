@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
+
 module VariationalCompiler.Json where
 
-import VariationalCompiler.Entities
+import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region)
 import Control.Monad.State.Class
 import Control.Monad.State
 import Control.Monad
@@ -9,27 +11,15 @@ import Data.Functor.Identity
 import Text.Megaparsec
 import Data.Aeson
 import Data.Text(pack)
+import GHC.Generics
+import Data.Aeson.TH
+import Data.ByteString.Lazy (ByteString)
 
-instance ToJSON Segment' where
-  toJSON (Text' s) = object
-    [ "type" .= pack "java-segment"
-    , "content" .= s
-    ]
+instance ToJSON Program where
+    toJSON = toJSON . jsonPrepare
 
-  toJSON (Choice' i l r) = object
-    [ "type" .= pack "dimension"
-    , "id" .= i
-    , "left" .= l
-    , "right" .= r
-    ]
-
-instance ToJSON Region' where
---[Segment] (Int, Int) (Int, Int)
-   toJSON (Region' s (sl,sc) (el,ec)) = object
-    [ "start"  .= [sl,sc]
-    , "end"    .= [el,ec]
-    , "region" .= s
-    ]
+instance FromJSON Program where
+    parseJSON o = parseJSON o >>= return . jsonUnprepare
 
 instance ToJSON SourcePos where
   toJSON pos = object 
@@ -48,40 +38,72 @@ instance ToJSON ParseError where
       ]
 
 --Slightly Different Definition that contains a range around the region
+type Loc = [Int] -- [Int, Int]
 type Program' = [Segment']
-data Segment' = Choice' Dimension Region' Region'
-              | Text' String
-               deriving(Show)
-data Region' = Region' [Segment'] (Int, Int) (Int, Int)
-              deriving(Show)
+data Segment' = Choice' 
+                    { dimension :: Dimension
+                    , left :: Region'
+                    , right :: Region' 
+                    }
+              | Text' { content :: String }
+               deriving(Show,Generic)
+
+data Region' = Region' 
+                   { region :: [Segment']
+                   , start :: [Int]
+                   , end :: [Int]
+                   }
+              deriving(Show,Generic)
+
+customOptions = defaultOptions 
+        { sumEncoding = defaultTaggedObject 
+                            { tagFieldName = "type"
+                            , contentsFieldName = "c" -- Shouldn't show up any where 
+                            }
+        , constructorTagModifier = tm
+        }
+      where tm "Choice'" = "choice"
+            tm "Text'" = "text"
+
+
+instance ToJSON Segment' where
+    toEncoding = genericToEncoding customOptions
+instance ToJSON Region' where -- Appears that if this wasn't set it would break all the lower ones
+    toEncoding = genericToEncoding customOptions
+
+instance FromJSON Segment' 
+instance FromJSON Region' 
 
 jsonPrepare :: Program -> Program'
-jsonPrepare p = case runState (region p) (0,0) of
+jsonPrepare (P p) = case runState (regionPrepare p) [0,0] of
                       (Region' s _ _, _) -> s
 
-type Loc = (Int, Int)
 
-region :: [Segment] -> StateT Loc Identity Region'
-region s = do start <- get
-              reg <- mapM segment s
-              end <- get
-              return (Region' reg start end)
+regionPrepare :: [Segment] -> StateT Loc Identity Region'
+regionPrepare s = do start <- get
+                     reg <- mapM segmentPrepare s
+                     end <- get
+                     return (Region' reg start end)
 
-segment :: Segment -> StateT Loc Identity Segment'
-segment (Choice d p1 p2) = do r1 <- region p1
-                              r2 <- region p2
-                              return (Choice' d r1 r2)
-segment (Text s)         = do modify (adjLoc s)
-                              return (Text' s)
+segmentPrepare :: Segment -> StateT Loc Identity Segment'
+segmentPrepare (Choice d p1 p2) = do r1 <- regionPrepare p1
+                                     r2 <- regionPrepare p2
+                                     return (Choice' d r1 r2)
+segmentPrepare (Text s)         = do modify (adjLoc s)
+                                     return (Text' s)
 
--- | Adjust location based on the string
---
--- >>> adjLoc "    hello world" (0,0)
--- (0,15)
--- >>> adjLoc "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        " (0,0)
--- (4,8)
+jsonUnprepare :: Program' -> Program
+jsonUnprepare = P . fmap segmentUnprepare
+
+segmentUnprepare :: Segment' -> Segment
+segmentUnprepare (Choice' d l r) = (Choice d (regionUnprepare l) (regionUnprepare r))
+segmentUnprepare (Text' s) = (Text s)
+
+regionUnprepare :: Region' -> Region
+regionUnprepare (Region' s _ _) = fmap segmentUnprepare s
+
 adjLoc :: String -> Loc -> Loc
 adjLoc s i = foldl beanCounter i s
       where beanCounter :: Loc -> Char -> Loc
-            beanCounter (pl, _)  '\n' = (pl + 1, 0)
-            beanCounter (pl, pc) _    = (pl, pc + 1)
+            beanCounter [pl, _]  '\n' = [pl + 1, 0]
+            beanCounter [pl, pc] _    = [pl, pc + 1]

@@ -1,0 +1,46 @@
+[
+    {
+        "tag": "Text'",
+        "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        "
+    },
+    {
+        "tag": "Choice'",
+        "dimension": "HI",
+        "left": {
+            "start": [
+                4,
+                8
+            ],
+            "end": [
+                6,
+                8
+            ],
+            "region": [
+                {
+                    "tag": "Text'",
+                    "content": "\n        System.out.println(\"Hi\");\n        "
+                }
+            ]
+        },
+        "right": {
+            "start": [
+                6,
+                8
+            ],
+            "end": [
+                7,
+                8
+            ],
+            "region": [
+                {
+                    "tag": "Text'",
+                    "content": "System.out.println(\"Hello, World\");\n        "
+                }
+            ]
+        }
+    },
+    {
+        "tag": "Text'",
+        "content": "}\n\n}\n"
+    }
+]

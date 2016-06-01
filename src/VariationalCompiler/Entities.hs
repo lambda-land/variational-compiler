@@ -9,7 +9,8 @@ type Dimension = String
 
 -- | A program is the root of the abstract syntax tree that represents
 --   the variational file.
-type Program = [Segment]
+newtype Program = P [Segment]
+               deriving(Show)
 
 -- | A segment represents a portion of a file. Either a literal 
 --   portion code or a variational portion of the file are given.
@@ -25,7 +26,10 @@ type Region = [Segment]
 -- Selection
 
 data Alternative = LeftBranch | RightBranch
+               deriving(Show)
 
 type Selection = (Dimension, Alternative)
 
-
+-- Projection (used when generating a view)
+newtype Projection = Proj (Program, [Selection])
+               deriving(Show)
