@@ -1,4 +1,6 @@
+{-# LANGUAGE DeriveGeneric #-}
 module VariationalCompiler.Entities where
+import GHC.Generics
 
 -- Abstract Syntax Tree
 
@@ -9,7 +11,8 @@ type Dimension = String
 
 -- | A program is the root of the abstract syntax tree that represents
 --   the variational file.
-type Program = [Segment]
+newtype Program = P [Segment]
+               deriving(Show)
 
 -- | A segment represents a portion of a file. Either a literal 
 --   portion code or a variational portion of the file are given.
@@ -17,16 +20,17 @@ data Segment = Choice Dimension Region Region
              | Text String
                deriving(Show)
 
--- | A series of segments with information about the starting and 
---   ending location (Line, Column) of the segments in the program.
-data Region = Region [Segment] (Int, Int) (Int, Int)
-              deriving(Show)
+-- | Same as a program only logically means the region inside of 
+--   a variational statement
+type Region = [Segment]
 
 
 -- Selection
 
 data Alternative = LeftBranch | RightBranch
+               deriving(Show, Generic)
 
 type Selection = (Dimension, Alternative)
 
-
+-- Projection (used when generating a view)
+type Projection = (Program, [Selection])

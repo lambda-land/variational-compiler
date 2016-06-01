@@ -14,9 +14,9 @@ source-repository head
   location: https://github.com/rikkigibson/variational-compiler
   branch:   master
 
-executable variational-compiler
+executable variational-parser
   hs-source-dirs:      src
-  main-is:             Main.hs
+  main-is:             Parser.hs
   default-language:    Haskell2010
   build-depends:       
     base,
@@ -25,5 +25,21 @@ executable variational-compiler
     bytestring,
     scientific,
     text,
-    aeson-pretty
+    aeson-pretty,
+    mtl
+  -- ghc-options:
+
+executable variational-view
+  hs-source-dirs:      src
+  main-is:             View.hs
+  default-language:    Haskell2010
+  build-depends:       
+    base,
+    aeson,
+    megaparsec,
+    bytestring,
+    scientific,
+    text,
+    aeson-pretty,
+    mtl
   -- ghc-options:

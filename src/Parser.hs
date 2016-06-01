@@ -20,8 +20,8 @@ instance (ToJSON a, ToJSON b) => ToJSON (Either' a b) where
 
 main :: IO ()
 main = do
-  maybeTree <- runParser vjProgram "stdin" <$> getContents
-  putStrLn (encode (E maybeTree))
+  maybeTree <- runParser program "stdin" <$> getContents
+  putStrLn (either encode encode maybeTree)
   case maybeTree of
     Right _ -> exitSuccess
     Left _ -> exitWith (ExitFailure 1)
