@@ -1,6 +1,7 @@
 module VariationalCompiler.View where
 import VariationalCompiler.Entities
 
+-- | Same as 'view' but handles the Program type
 getView :: [Selection] -> Program -> Program
 getView cs (P p) = P $ view cs p
 

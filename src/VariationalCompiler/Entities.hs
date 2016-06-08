@@ -11,7 +11,12 @@ type Dimension = String
 
 -- | A program is the root of the abstract syntax tree that represents
 --   the variational file.
-newtype Program = P [Segment]
+newtype Program = P [Segment] -- NOTE: This newtype allows us to create an
+                              --       instance of the ToJSON and FromJSON
+                              --       to add and remove start and end info 
+                              --       while serializing and deserializing.
+                              --       Otherwise Region and Program would be 
+                              --       the same.
                deriving(Show)
 
 -- | A segment represents a portion of a file. Either a literal 

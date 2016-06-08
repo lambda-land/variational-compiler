@@ -10,18 +10,17 @@ import Data.Scientific as Scientific
 import Data.Aeson
 import Data.Text(pack)
 
-toPoint :: (Int, Int) -> [Scientific]
-toPoint t = [toScientific (fst t), toScientific (snd t)]
-        where toScientific i = scientific (fromIntegral i) 0
-
 -- Parser
 
+-- | Consume all white space
 sc :: Parser ()
 sc = L.space (void spaceChar) empty empty
 
+-- | Consume a reserved word supplied
 rword :: String -> Parser ()
 rword w = string w *> notFollowedBy alphaNumChar <* sc
 
+-- | Parse the concrete choice syntax into Segment node in ast
 choiceSegment :: Parser Segment
 choiceSegment =
   do rword "#dimension" <?> "Choice keyword"
@@ -34,6 +33,8 @@ choiceSegment =
      return (Choice name p1 p2)
   <?> "Choice node"
 
+-- | Parse input into string until a choice keyword is encountered
+--   then return the string as a text segment.
 textSegment :: Parser Segment
 textSegment = do
   s <- someTill anyChar
@@ -45,12 +46,11 @@ textSegment = do
         , eof]))
   return (Text s)
 
-fromSourcePos :: SourcePos -> (Int, Int)
-fromSourcePos b = (sourceLine b,sourceColumn b)
-
+-- | Parse either a choice or a text segment
 segment :: Parser Segment
 segment = choice [choiceSegment, textSegment]
 
+-- | Parse a series of segments (a region or a program 
 region :: Parser [Segment]
 region = manyTill segment
   (lookAhead
