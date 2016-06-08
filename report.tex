@@ -7,7 +7,7 @@
 \large{Rikki Gibson and Cody Ray Hoeft}
 \normalsize
 \section{Overview}
-The Variational Parser or whatever it's called now is a tool supporting C preprocessor-like language extensions. The intended use case for this parser is to support an Atom editor plugin enabling users to inspect and modify documents containing the equivalent to \#ifdefs by specifying whether dimensions are defined, and if so, whether to choose between a ``left'' or ``right'' alternative.
+The Variational Parser is a tool supporting C preprocessor-like language extensions. The intended use case for this parser is to support an Atom editor plugin enabling users to inspect and modify documents containing the equivalent to \#ifdefs by specifying whether dimensions are defined, and if so, whether to choose between a ``left'' or ``right'' alternative.
 
 What we're delivering enables users to do two basic actions:
 
@@ -22,7 +22,7 @@ Some of the work done by this parser is already done by the C preprocessor, and 
 
 The parsers \texttt{choiceSegment}, \texttt{textSegment}, \texttt{program}, and several supporting parsers correspond to the shape of our abstract syntax and define the way that concrete syntax is transformed into abstract syntax (that's the definition of parsing, probably!)
 
-\texttt{view} is the main function for reducing ASTs given a set of user selections.
+\texttt{view} is the main, recursively referenced function for reducing ASTs given a set of user selections, while \texttt{getView} serves as an entry point for generating views.
 
 \texttt{jsonPrepare} is how we take a just-parsed AST and annotate it with line and column information that does not count the variational concrete syntax when computing line and column positions. This problem and our solution will be discussed further in the design decisions section.
 
@@ -30,5 +30,6 @@ The parsers \texttt{choiceSegment}, \texttt{textSegment}, \texttt{program}, and 
 \begin{enumerate}
 \item Our lives were simplified a great deal by the library Megaparsec, which allows users to construct parsers by composing them with other parsers and applying functions that consume and produce parsers, etc. The combinator design pattern, at first a bit of a mind-bender, we eventually found was simple and clear.
 \item Using JSON, stdin, and stdout for inter-process communication was a pretty simple choice for us. Aeson proved a good library for encoding and decoding JSON, and our choice to use GHC's generics extension allowed us to minimize the amount of boilerplate translation code in the project.
+\item We made the decision to produce different executable targets for the different ``functions'' we expect the editor to invoke. This seemed to be simpler than taking command line arguments and parsing them to decide which main function to perform.
 \end{enumerate}
 \end{document}
