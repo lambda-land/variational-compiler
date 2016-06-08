@@ -7,17 +7,26 @@
 \large{Rikki Gibson and Cody Ray Hoeft}
 \normalsize
 \section{Overview}
-The Variational Parser or whatever it's called now is a tool supporting C preprocessor-like language extensions. The intended use case for this parser is to support an Atom editor plugin enabling users to inspect and modify documents containing the equivalent to \#ifdefs by specifying whether dimensions are defined, and if so, whether to choose between a "left" or "right" alternative.
+The Variational Parser or whatever it's called now is a tool supporting C preprocessor-like language extensions. The intended use case for this parser is to support an Atom editor plugin enabling users to inspect and modify documents containing the equivalent to \#ifdefs by specifying whether dimensions are defined, and if so, whether to choose between a ``left'' or ``right'' alternative.
 
 What we're delivering enables users to do two basic actions:
 
 \begin{enumerate} 
 \item Parse a document containing our variational syntax into an abstract syntax tree with line and column numbers that support syntax highlighting.
-\item Consume an AST and a set of user selections, producing an AST with the specified dimensions reduced to one of their branches. (the "view" function).
+\item Consume an AST and a set of user selections, producing an AST with the specified dimensions reduced to one of their branches. (the ``view'' function).
 \end{enumerate}
-Some of the work done by this parser is already done by the C preprocessor, and the tool bears a vague resemblance to some commonly-used "language service" programs that support editor plugins that maximize the amount of code that can be shared between plugin implementations for various different editors.
+Some of the work done by this parser is already done by the C preprocessor, and the tool bears a vague resemblance to some commonly-used ``language service'' programs that support editor plugins that maximize the amount of code that can be shared between plugin implementations for various different editors.
 
 \section{Types and functions used}
+\texttt{data Segment} is the core of our abstract syntax, providing a case for a simple text node as well as a case for a choice node with a dimension, left branch and right branch.
+
+The parsers \texttt{choiceSegment}, \texttt{textSegment}, \texttt{program}, and several supporting parsers correspond to the shape of our abstract syntax and define the way that concrete syntax is transformed into abstract syntax (that's the definition of parsing, probably!)
+
+\texttt{view} is the main function for reducing ASTs given a set of user selections.
+
+\texttt{jsonPrepare} is how we take a just-parsed AST and annotate it with line and column information that does not count the variational concrete syntax when computing line and column positions. This problem and our solution will be discussed further in the design decisions section.
+
+\section{Design decisions}
 
 
 \end{document}
