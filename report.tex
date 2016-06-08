@@ -1,0 +1,23 @@
+\documentclass[11pt]{article}
+\setlength{\parskip}{1em}
+
+\begin{document}
+\Large\textbf{CS 583 Final Project Report}
+
+\large{Rikki Gibson and Cody Ray Hoeft}
+\normalsize
+\section{Overview}
+The Variational Parser or whatever it's called now is a tool supporting C preprocessor-like language extensions. The intended use case for this parser is to support an Atom editor plugin enabling users to inspect and modify documents containing the equivalent to \#ifdefs by specifying whether dimensions are defined, and if so, whether to choose between a "left" or "right" alternative.
+
+What we're delivering enables users to do two basic actions:
+
+\begin{enumerate} 
+\item Parse a document containing our variational syntax into an abstract syntax tree with line and column numbers that support syntax highlighting.
+\item Consume an AST and a set of user selections, producing an AST with the specified dimensions reduced to one of their branches. (the "view" function).
+\end{enumerate}
+Some of the work done by this parser is already done by the C preprocessor, and the tool bears a vague resemblance to some commonly-used "language service" programs that support editor plugins that maximize the amount of code that can be shared between plugin implementations for various different editors.
+
+\section{Types and functions used}
+
+
+\end{document}
