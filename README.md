@@ -11,15 +11,16 @@ Since the last milestone, we've added a "view" function to reduce ASTs, and we'v
 ```bash
 git clone https://github.com/RikkiGibson/variational-compiler.git
 cd variational-compiler
+# stack can be installed using `cabal install stack` or is available in many 
+# system package managers (i.e., brew)
 stack setup # don't be alarmed if this takes a few minutes
 stack build
 # Parse a file with the compiler
-stack exec variational-compiler < testfiles/hello.vjava | aeson-pretty
+stack exec variational-parser < testfiles/hello.vjava | aeson-pretty
 # Reduce an AST
 stack exec variational-view < testfiles/view_input.json | aeson-pretty
 
 ```
-
 
 ## Design questions
 
