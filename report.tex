@@ -27,6 +27,8 @@ The parsers \texttt{choiceSegment}, \texttt{textSegment}, \texttt{program}, and 
 \texttt{jsonPrepare} is how we take a just-parsed AST and annotate it with line and column information that does not count the variational concrete syntax when computing line and column positions. This problem and our solution will be discussed further in the design decisions section.
 
 \section{Design decisions}
-
-
+\begin{enumerate}
+\item Our lives were simplified a great deal by the library Megaparsec, which allows users to construct parsers by composing them with other parsers and applying functions that consume and produce parsers, etc. The combinator design pattern, at first a bit of a mind-bender, we eventually found was simple and clear.
+\item Using JSON, stdin, and stdout for inter-process communication was a pretty simple choice for us. Aeson proved a good library for encoding and decoding JSON, and our choice to use GHC's generics extension allowed us to minimize the amount of boilerplate translation code in the project.
+\end{enumerate}
 \end{document}
