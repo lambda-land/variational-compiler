@@ -72,18 +72,25 @@ customOptions = defaultOptions
         }
       where tm "Choice'" = "choice"
             tm "Text'" = "text"
+            _           = "flag"
 
 -- Automatic generated instances with the custom settings applied
 instance ToJSON Segment' where
+    toJSON = genericToJSON customOptions
     toEncoding = genericToEncoding customOptions
 instance ToJSON Region' where -- Appears that if this wasn't set it would break all the lower ones
+    toJSON = genericToJSON customOptions
     toEncoding = genericToEncoding customOptions
-instance ToJSON Alternative
+instance ToJSON Alternative where
+    toJSON = genericToJSON customOptions
+    toEncoding = genericToEncoding customOptions
 
--- Automatically generated instances that presumably use the ToJSON instances
-instance FromJSON Segment'
-instance FromJSON Region'
-instance FromJSON Alternative
+instance FromJSON Segment' where
+    parseJSON = genericParseJSON customOptions
+instance FromJSON Region' where
+    parseJSON = genericParseJSON customOptions
+instance FromJSON Alternative where
+    parseJSON = genericParseJSON customOptions
 
 -- | Run the state monad on the program to generate the start and end data
 jsonPrepare :: Program -> Program'
