@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import System.Exit
+import Control.Monad
 import Data.Maybe
 import Text.Megaparsec
 import VariationalCompiler.Entities
@@ -16,6 +17,13 @@ import Prelude hiding (putStrLn, getContents)
 --   call to getView. Encode the result of the view 
 --   in JSON and return it to stdout.
 main :: IO ()
-main = do
-  rawInput <- getContents
-  either (\s -> putStrLn (pack s) >> exitWith (ExitFailure 1)) (\(p,sel) -> putStrLn (encode (getView sel p))) $ eitherDecode rawInput 
+main = getContents >>= either putFailure putSuccess . eitherDecode 
+
+-- Print the message returned by aeson and then set the exit status
+putFailure :: String -> IO ()
+putFailure = putStrLn . pack >=> const exitFailure
+
+-- Generate the view, then reencode and print it
+putSuccess :: (Program, [Selection]) -> IO ()
+putSuccess = putStrLn . encode . getView'
+   where getView' (p,sel) = getView sel p
