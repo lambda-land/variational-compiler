@@ -12,11 +12,11 @@ import Data.Text(pack)
 
 -- Parser
 
--- | Consume all white space
+-- | Consume white space.
 sc :: Parser ()
 sc = L.space (void spaceChar) empty empty
 
--- | Consume a reserved word supplied
+-- | Consume a reserved word w.
 rword :: String -> Parser ()
 rword w = string w *> notFollowedBy alphaNumChar <* sc
 
@@ -50,7 +50,7 @@ textSegment = do
 segment :: Parser Segment
 segment = choice [choiceSegment, textSegment]
 
--- | Parse a series of segments (a region or a program 
+-- | Parse a series of segments (a region or a program
 region :: Parser [Segment]
 region = manyTill segment
   (lookAhead
@@ -59,5 +59,6 @@ region = manyTill segment
       , void (string "#end" <?> "End lookahead")
       , eof]))
 
+-- | Main parser for variational programs.
 program :: Parser Program
 program = region >>= return . P
