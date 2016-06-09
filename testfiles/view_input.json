@@ -1,51 +1,51 @@
-[
-[
-    {
-        "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
-        "type": "text"
-    },
-    {
-        "dimension": "HI",
-        "left": {
-            "start": [
-                4,
-                8
-            ],
-            "end": [
-                6,
-                8
-            ],
-            "region": [
-                {
-                    "content": "\n        System.out.println(\"Hi\");\n        ",
-                    "type": "text"
-                }
-            ]
-        },
-        "right": {
-            "start": [
-                6,
-                8
-            ],
-            "end": [
-                7,
-                8
-            ],
-            "region": [
-                {
-                    "content": "System.out.println(\"Hello, World\");\n        ",
-                    "type": "text"
-                }
-            ]
-        },
-        "type": "choice"
-    },
-    {
-        "content": "}\n\n}\n",
-        "type": "text"
-    }
-],
-[
-    ["HI","LeftBranch"]
-]
-]
+{
+  "program": [
+      {
+          "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
+          "type": "text"
+      },
+      {
+          "dimension": "HI",
+          "left": {
+              "start": [
+                  4,
+                  8
+              ],
+              "end": [
+                  6,
+                  8
+              ],
+              "region": [
+                  {
+                      "content": "\n        System.out.println(\"Hi\");\n        ",
+                      "type": "text"
+                  }
+              ]
+          },
+          "right": {
+              "start": [
+                  6,
+                  8
+              ],
+              "end": [
+                  7,
+                  8
+              ],
+              "region": [
+                  {
+                      "content": "System.out.println(\"Hello, World\");\n        ",
+                      "type": "text"
+                  }
+              ]
+          },
+          "type": "choice"
+      },
+      {
+          "content": "}\n\n}\n",
+          "type": "text"
+      }
+  ],
+  "selections": [
+      ["HI","LeftBranch"]
+  ]
+}

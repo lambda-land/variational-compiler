@@ -2,11 +2,11 @@ module VariationalCompiler.View where
 import VariationalCompiler.Entities
 
 -- | Same as 'view' but handles the Program type
-getView :: [Selection] -> Program -> Program
-getView cs (P p) = P $ view cs p
+getView :: Projection -> Program
+getView Projection { program = (P p), selections = cs } = P (view cs p)
 
 -- | Reduces a set of a program given a list of choices.
-view :: [Selection] -> [Segment] -> [Segment] 
+view :: [Selection] -> [Segment] -> [Segment]
 view cs = concatMap (viewSegment cs)
 
 -- | Reduces a segment given a list of choices.

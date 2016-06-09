@@ -19,8 +19,8 @@ instance (ToJSON a, ToJSON b) => ToJSON (Either' a b) where
   toJSON (E (Right b)) = toJSON b
 
 
--- | Read concrete type from stdin and then parse into simple 
---   abstract syntax tree. The ast or errors from parsing are 
+-- | Read concrete type from stdin and then parse into simple
+--   abstract syntax tree. The ast or errors from parsing are
 --   converted to JSON and passed to stdout.
 main :: IO ()
 main = do

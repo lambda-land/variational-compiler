@@ -3,7 +3,7 @@
 
 module VariationalCompiler.Json where
 
-import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region,Alternative)
+import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region,Alternative(..),Projection,Selection(..))
 import Control.Monad.State.Class
 import Control.Monad.State
 import Control.Monad
@@ -91,6 +91,9 @@ instance FromJSON Region' where
     parseJSON = genericParseJSON customOptions
 instance FromJSON Alternative where
     parseJSON = genericParseJSON customOptions
+instance FromJSON Projection where
+    parseJSON = genericParseJSON customOptions
+
 
 -- | Run the state monad on the program to generate the start and end data
 jsonPrepare :: Program -> Program'
