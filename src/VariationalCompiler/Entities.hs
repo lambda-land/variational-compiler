@@ -32,15 +32,15 @@ type Region = [Segment]
 
 -- Selection
 
+-- | Represents one of the branches of a choice.
 data Alternative = LeftBranch | RightBranch
-               deriving(Show, Generic)
+               deriving(Show)
 
-type Selection = (Dimension, Alternative)
-
--- data Selection = Selection
---   { dimension :: Dimension
---   , alternative :: Alternative
---   } deriving(Show, Generic)
+-- | Represents a user's selection of a branch for all choices with a particular dimension.
+data Selection = Selection
+  { dimension :: Dimension
+  , alternative :: Alternative
+  } deriving(Show, Generic)
 
 -- Projection (used when generating a view)
 --

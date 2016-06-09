@@ -46,6 +46,6 @@
       }
   ],
   "selections": [
-      ["HI","LeftBranch"]
+      { "dimension": "HI", "alternative": "left" }
   ]
 }

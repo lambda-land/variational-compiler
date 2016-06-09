@@ -13,6 +13,7 @@ import Data.Aeson
 import Data.Text(pack)
 import GHC.Generics
 import Data.Aeson.TH
+import Data.Aeson.Types
 import Data.ByteString.Lazy (ByteString)
 
 -- | Prepare the list and then call toJSON on the type with
@@ -82,16 +83,22 @@ instance ToJSON Region' where -- Appears that if this wasn't set it would break 
     toJSON = genericToJSON customOptions
     toEncoding = genericToEncoding customOptions
 instance ToJSON Alternative where
-    toJSON = genericToJSON customOptions
-    toEncoding = genericToEncoding customOptions
+    toJSON LeftBranch = "left"
+    toJSON RightBranch = "right"
 
 instance FromJSON Segment' where
     parseJSON = genericParseJSON customOptions
 instance FromJSON Region' where
     parseJSON = genericParseJSON customOptions
+
 instance FromJSON Alternative where
-    parseJSON = genericParseJSON customOptions
+    parseJSON (String "left") = return LeftBranch
+    parseJSON (String "right") = return RightBranch
+    parseJSON v = typeMismatch "Only the strings \"left\" or \"right\" can decode into an Alternative value." v
+
 instance FromJSON Projection where
+    parseJSON = genericParseJSON customOptions
+instance FromJSON Selection where
     parseJSON = genericParseJSON customOptions
 
 
