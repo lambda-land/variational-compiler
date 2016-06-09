@@ -85,12 +85,9 @@ instance ToJSON Alternative where
     toJSON = genericToJSON customOptions
     toEncoding = genericToEncoding customOptions
 
-instance FromJSON Segment' where
-    parseJSON = genericParseJSON customOptions
-instance FromJSON Region' where
-    parseJSON = genericParseJSON customOptions
-instance FromJSON Alternative where
-    parseJSON = genericParseJSON customOptions
+instance FromJSON Segment'
+instance FromJSON Region'
+instance FromJSON Alternative
 
 -- | Run the state monad on the program to generate the start and end data
 jsonPrepare :: Program -> Program'
