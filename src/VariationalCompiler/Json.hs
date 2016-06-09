@@ -46,7 +46,7 @@ instance ToJSON ParseError where
 
 -- Slightly Different Definitions that contains a range around the region
 -- These are declared using record syntax to take advantage of GHC generics for serialization.
-type Loc = [Int] -- [Int, Int]
+type Loc = (Int, Int) -- line number, column
 type Program' = [Segment']
 data Segment' = Choice'
                     { dimension :: Dimension
@@ -57,8 +57,8 @@ data Segment' = Choice'
                deriving(Show,Generic)
 data Region' = Region'
                    { region :: [Segment']
-                   , start :: [Int]
-                   , end :: [Int]
+                   , start :: Loc
+                   , end :: Loc
                    }
               deriving(Show,Generic)
 
@@ -87,7 +87,7 @@ instance FromJSON Alternative
 
 -- | Run the state monad on the program to generate the start and end data
 jsonPrepare :: Program -> Program'
-jsonPrepare (P p) = case runState (regionPrepare p) [0,0] of
+jsonPrepare (P p) = case runState (regionPrepare p) (0,0) of
                       (Region' s _ _, _) -> s
 
 -- | Monad that adds start and end information to regions by retreiving the
@@ -127,5 +127,5 @@ regionUnprepare (Region' s _ _) = fmap segmentUnprepare s
 adjLoc :: String -> Loc -> Loc
 adjLoc s i = foldl beanCounter i s
       where beanCounter :: Loc -> Char -> Loc
-            beanCounter [pl, _]  '\n' = [pl + 1, 0]
-            beanCounter [pl, pc] _    = [pl, pc + 1]
+            beanCounter (pl, _)  '\n' = (pl + 1, 0)
+            beanCounter (pl, pc) _    = (pl, pc + 1)
