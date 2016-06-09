@@ -1,11 +1,10 @@
 [
 [
     {
-        "tag": "Text'",
-        "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        "
+        "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
+        "type": "text"
     },
     {
-        "tag": "Choice'",
         "dimension": "HI",
         "left": {
             "start": [
@@ -18,8 +17,8 @@
             ],
             "region": [
                 {
-                    "tag": "Text'",
-                    "content": "\n        System.out.println(\"Hi\");\n        "
+                    "content": "\n        System.out.println(\"Hi\");\n        ",
+                    "type": "text"
                 }
             ]
         },
@@ -34,15 +33,16 @@
             ],
             "region": [
                 {
-                    "tag": "Text'",
-                    "content": "System.out.println(\"Hello, World\");\n        "
+                    "content": "System.out.println(\"Hello, World\");\n        ",
+                    "type": "text"
                 }
             ]
-        }
+        },
+        "type": "choice"
     },
     {
-        "tag": "Text'",
-        "content": "}\n\n}\n"
+        "content": "}\n\n}\n",
+        "type": "text"
     }
 ],
 [

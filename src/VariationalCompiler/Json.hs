@@ -71,8 +71,8 @@ customOptions = defaultOptions
         , constructorTagModifier = tm
         }
       where tm "Choice'" = "choice"
-            tm "Text'" = "text"
-            _           = "flag"
+            tm "Text'"   = "text"
+            tm s         = s
 
 -- Automatic generated instances with the custom settings applied
 instance ToJSON Segment' where
