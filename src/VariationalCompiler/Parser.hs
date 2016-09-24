@@ -18,13 +18,16 @@ sc = L.space (void spaceChar) empty empty
 
 -- | Consume a reserved word w.
 rword :: String -> Parser ()
-rword w = string w *> notFollowedBy alphaNumChar <* sc
+rword w = do
+  string w
+  void $ spaceChar
 
 -- | Parse the concrete choice syntax into Segment node in ast
 choiceSegment :: Parser Segment
 choiceSegment =
   do rword "#dimension" <?> "Choice keyword"
      name <- many alphaNumChar
+     char '\n'
      p1 <- region
      rword "#else" <?> "Else keyword"
      p2 <- region
