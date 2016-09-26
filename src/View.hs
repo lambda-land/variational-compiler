@@ -25,4 +25,4 @@ putFailure = putStrLn . pack >=> const exitFailure
 
 -- Generate the view, then reencode and print it
 putSuccess :: Projection -> IO ()
-putSuccess = putStrLn . encode . getView
+putSuccess = putStrLn . encode . viewProjection

@@ -1,50 +1,60 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 module VariationalCompiler.Entities where
 import GHC.Generics
+import Text.Megaparsec
 
--- Abstract Syntax Tree
 
--- | A dimension is an identifier that is assigned to a region
---   with a choice. A set of dimensions are specified to generate
---   a view.
-type Dimension = String
+-------- Abstract Syntax --------
 
--- | A program is the root of the abstract syntax tree that represents
---   the variational file.
-newtype Program = P [Segment] -- NOTE: This newtype allows us to create an
-                              --       instance of the ToJSON and FromJSON
-                              --       to add and remove start and end info
-                              --       while serializing and deserializing.
-                              --       Otherwise Region and Program would be
-                              --       the same.
+type LineCol = (Int, Int)
+
+fromSourcePos :: SourcePos -> LineCol
+fromSourcePos (SourcePos _ line column) =
+  (fromIntegral $ unPos line, fromIntegral $ unPos column)
+
+-- | Represents the position of a span of text in a source document.
+-- Indicates the part of a document a syntax node was parsed from.
+data Span = Span
+  { start :: LineCol,
+    end :: LineCol
+  } deriving(Show, Generic)
+
+-- | A part of a document. Contains either simple text content
+-- or a choice between two alternatives.
+data Segment = ChoiceSeg Choice
+             | ContentSeg Content
                deriving(Show)
 
--- | A segment represents a portion of a file. Either a literal
---   portion code or a variational portion of the file are given.
-data Segment = Choice Dimension Region Region
-             | Text String
-               deriving(Show)
+data Choice = Choice
+  { dimension :: String
+  , left :: [Segment]
+  , right :: [Segment]
+  , span :: Span
+  } deriving(Show, Generic)
 
--- | Same as a program only logically means the region inside of
---   a variational statement
-type Region = [Segment]
+data Content = Content
+  { content :: String
+  , span :: Span
+  } deriving(Show, Generic)
 
 
--- Selection
+
+-------- View --------
 
 -- | Represents one of the branches of a choice.
 data Alternative = LeftBranch | RightBranch
-               deriving(Show)
+  deriving(Show)
 
 -- | Represents a user's selection of a branch for all choices with a particular dimension.
 data Selection = Selection
-  { dimension :: Dimension
+  { dimension :: String
   , alternative :: Alternative
   } deriving(Show, Generic)
 
 -- Projection (used when generating a view)
 --
 data Projection = Projection
-  { program :: Program
+  { program :: [Segment]
   , selections :: [Selection]
   } deriving(Show, Generic)

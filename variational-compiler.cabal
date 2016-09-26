@@ -7,7 +7,7 @@ author:              Rikki Gibson and Cody Ray Hoeft
 maintainer:          rikkigibson@gmail.com
 category:            Language
 build-type:          Simple
-cabal-version:       >= 1.22
+cabal-version:       >= 1.24
 
 source-repository head
   type:     git
@@ -26,7 +26,8 @@ executable variational-parser
     scientific,
     text,
     aeson-pretty,
-    mtl
+    mtl,
+    unordered-containers
   -- ghc-options:
 
 executable variational-view
@@ -41,5 +42,6 @@ executable variational-view
     scientific,
     text,
     aeson-pretty,
-    mtl
+    mtl,
+    unordered-containers
   -- ghc-options:

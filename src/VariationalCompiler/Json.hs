@@ -1,95 +1,72 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module VariationalCompiler.Json where
 
-import VariationalCompiler.Entities (Segment(..),Program(..),Dimension, Region,Alternative(..),Projection,Selection(..))
+import VariationalCompiler.Entities
 import Control.Monad.State.Class
 import Control.Monad.State
 import Control.Monad
 import Data.Functor.Identity
 import Text.Megaparsec
 import Data.Aeson
-import Data.Text(pack)
+import Data.Text
 import GHC.Generics
 import Data.Aeson.TH
 import Data.Aeson.Types
 import Data.ByteString.Lazy (ByteString)
+import qualified Data.HashMap.Strict as HM
 
--- | Prepare the list and then call toJSON on the type with
---   begin and end data.
-instance ToJSON Program where
-    toJSON = toJSON . jsonPrepare
-
--- | Parse the type with begin and end data and then strip
---   the extra data.
-instance FromJSON Program where
-    parseJSON o = parseJSON o >>= return . jsonUnprepare
+instance ToJSON Pos where
+   toJSON = toJSON . unPos
 
 -- | For converting parsec SourcePos to json
 instance ToJSON SourcePos where
-  toJSON pos = object
-    [ "sourceName" .= sourceName pos
-    , "sourceLine" .= sourceLine pos
-    , "sourceColumn" .= sourceColumn pos
-    ]
+  toJSON spos = String $ pack $ show spos
 
 -- | For converting parsec Message to json
-instance ToJSON Message where
-  toJSON = toJSON . messageString
+instance (ToJSON t) => ToJSON (ErrorItem t)
 
 -- | For convertng parsec ParseError to json
-instance ToJSON ParseError where
-  toJSON err = object
-      [ "errorPos" .= errorPos err
-      , "errorMessages" .= errorMessages err
-      ]
+-- instance ToJSON (ParseError t e) where
+--   toJSON err = object
+--       [ "errorPos" .= errorPos err
+--       , "errorMessages" .= show err
+--       ]
+instance (ToJSON t, ToJSON e) => ToJSON (ParseError t e)
 
--- Slightly Different Definitions that contains a range around the region
--- These are declared using record syntax to take advantage of GHC generics for serialization.
-type Loc = (Int, Int) -- line number, column
-type Program' = [Segment']
-data Segment' = Choice'
-                    { dimension :: Dimension
-                    , left :: Region'
-                    , right :: Region'
-                    }
-              | Text' { content :: String }
-               deriving(Show,Generic)
-data Region' = Region'
-                   { region :: [Segment']
-                   , start :: Loc
-                   , end :: Loc
-                   }
-              deriving(Show,Generic)
+instance ToJSON Span
+instance ToJSON Choice
+instance ToJSON Content
 
--- | Options that will be passed into the generated aeson instances
-customOptions = defaultOptions
-        { sumEncoding = defaultTaggedObject
-                            { tagFieldName = "type"
-                            , contentsFieldName = "c" -- Shouldn't show up any where
-                            }
-        , constructorTagModifier = tm
-        }
-      where tm "Choice'" = "choice"
-            tm "Text'"   = "text"
-            tm s         = s
+addTag :: Text -> Value -> Value
+addTag t (Object o) = Object $ HM.insert "type" (String t) o
+addTag t v = v
 
--- Automatic generated instances with the custom settings applied
-instance ToJSON Segment' where
-    toJSON = genericToJSON customOptions
-    toEncoding = genericToEncoding customOptions
-instance ToJSON Region' where -- Appears that if this wasn't set it would break all the lower ones
-    toJSON = genericToJSON customOptions
-    toEncoding = genericToEncoding customOptions
+instance ToJSON Segment where
+    toJSON (ChoiceSeg co) = addTag "choice" (genericToJSON defaultOptions co)
+    toJSON (ContentSeg ch) = addTag "text" (genericToJSON defaultOptions ch)
+
+    -- toEncoding avoids all the memory allocation from creating Values and seems faster but
+    -- probably will need to migrate some of the records to use sum types again for it
+    --toEncoding (ChoiceSeg co) = addTag "choice" (genericToEncoding defaultOptions co)
+    --toEncoding (ContentSeg ch) = addTag "text" (genericToEncoding defaultOptions ch)
+
 instance ToJSON Alternative where
     toJSON LeftBranch = "left"
     toJSON RightBranch = "right"
 
-instance FromJSON Segment' where
-    parseJSON = genericParseJSON customOptions
-instance FromJSON Region' where
-    parseJSON = genericParseJSON customOptions
+foo :: Object -> Object
+foo o = o
+
+instance FromJSON Span
+instance FromJSON Choice
+instance FromJSON Content
+instance FromJSON Segment where
+    parseJSON (Object o) = case HM.lookup "type" o of
+      Just (String "choice") -> ChoiceSeg <$> (parseJSON (Object o) :: Parser Choice)
+      Just (String "text") -> ContentSeg <$> (parseJSON (Object o) :: Parser Content)
+      Just v -> typeMismatch "Only objects containing a type field with the value \"choice\" or \"text\" can decode into a Segment" v
+      Nothing -> fail "Expected an object with a \"type\" field with the value \"choice\" or \"text\""
 
 instance FromJSON Alternative where
     parseJSON (String "left") = return LeftBranch
@@ -97,52 +74,6 @@ instance FromJSON Alternative where
     parseJSON v = typeMismatch "Only the strings \"left\" or \"right\" can decode into an Alternative value." v
 
 instance FromJSON Projection where
-    parseJSON = genericParseJSON customOptions
+    parseJSON = genericParseJSON defaultOptions
 instance FromJSON Selection where
-    parseJSON = genericParseJSON customOptions
-
-
--- | Run the state monad on the program to generate the start and end data
-jsonPrepare :: Program -> Program'
-jsonPrepare (P p) = case runState (regionPrepare p) (0,0) of
-                      (Region' s _ _, _) -> s
-
--- | Monad that adds start and end information to regions by retreiving the
---   start and end from the state monad before and after preparing the
---   segments.
-regionPrepare :: [Segment] -> StateT Loc Identity Region'
-regionPrepare s = do start <- get
-                     reg <- mapM segmentPrepare s
-                     end <- get
-                     return (Region' reg start end)
-
--- | Monad that prepares statements by executing a prepare on the region for
---   choice segments or by adjusting the state for text statements
-segmentPrepare :: Segment -> StateT Loc Identity Segment'
-segmentPrepare (Choice d p1 p2) = do r1 <- regionPrepare p1
-                                     r2 <- regionPrepare p2
-                                     return (Choice' d r1 r2)
-segmentPrepare (Text s)         = do modify (adjLoc s)
-                                     return (Text' s)
-
--- | Strip all start and end info from the node to create a normal Program
-jsonUnprepare :: Program' -> Program
-jsonUnprepare = P . fmap segmentUnprepare
-
--- | Convert to the normal type versions, recursivly calling into regionUnprepare to
---   remove data from decending nodes
-segmentUnprepare :: Segment' -> Segment
-segmentUnprepare (Choice' d l r) = Choice d (regionUnprepare l) (regionUnprepare r)
-segmentUnprepare (Text' s) = Text s
-
--- | Removes the start and end data from the region
-regionUnprepare :: Region' -> Region
-regionUnprepare (Region' s _ _) = fmap segmentUnprepare s
-
--- | Change the location based on the characters in the string. When a new line character is
---   encountered the line count is incremented and the column count is reset.
-adjLoc :: String -> Loc -> Loc
-adjLoc s i = foldl beanCounter i s
-      where beanCounter :: Loc -> Char -> Loc
-            beanCounter (pl, _)  '\n' = (pl + 1, 0)
-            beanCounter (pl, pc) _    = (pl, pc + 1)
+    parseJSON = genericParseJSON defaultOptions
