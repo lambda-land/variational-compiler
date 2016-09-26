@@ -19,19 +19,14 @@ import qualified Data.HashMap.Strict as HM
 instance ToJSON Pos where
    toJSON = toJSON . unPos
 
--- | For converting parsec SourcePos to json
 instance ToJSON SourcePos where
   toJSON spos = String $ pack $ show spos
 
--- | For converting parsec Message to json
+instance ToJSON Dec where
+  toJSON d = String $ pack $ show d
+
 instance (ToJSON t) => ToJSON (ErrorItem t)
 
--- | For convertng parsec ParseError to json
--- instance ToJSON (ParseError t e) where
---   toJSON err = object
---       [ "errorPos" .= errorPos err
---       , "errorMessages" .= show err
---       ]
 instance (ToJSON t, ToJSON e) => ToJSON (ParseError t e)
 
 instance ToJSON Span
@@ -54,9 +49,6 @@ instance ToJSON Segment where
 instance ToJSON Alternative where
     toJSON LeftBranch = "left"
     toJSON RightBranch = "right"
-
-foo :: Object -> Object
-foo o = o
 
 instance FromJSON Span
 instance FromJSON Choice
