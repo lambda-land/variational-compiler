@@ -13,6 +13,10 @@ fromSourcePos :: SourcePos -> LineCol
 fromSourcePos (SourcePos _ line column) =
   (fromIntegral $ unPos line - 1, fromIntegral $ unPos column - 1)
 
+fromChoiceSourcePos :: SourcePos -> LineCol
+fromChoiceSourcePos (SourcePos _ line column) =
+  (fromIntegral $ unPos line, fromIntegral $ unPos column - 1)
+
 -- | Represents the position of a span of text in a source document.
 -- Indicates the part of a document a syntax node was parsed from.
 data Span = Span
