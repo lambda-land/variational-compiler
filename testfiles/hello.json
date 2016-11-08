@@ -1,46 +1,271 @@
-[
-    {
-        "content": "public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
-        "type": "text"
-    },
-    {
-        "dimension": "HI",
-        "left": {
-            "start": [
-                4,
-                8
-            ],
-            "end": [
-                6,
-                8
-            ],
-            "region": [
-                {
-                    "content": "\n        System.out.println(\"Hi\");\n        ",
-                    "type": "text"
-                }
-            ]
-        },
-        "right": {
-            "start": [
-                6,
-                8
-            ],
-            "end": [
-                7,
-                8
-            ],
-            "region": [
-                {
-                    "content": "System.out.println(\"Hello, World\");\n        ",
-                    "type": "text"
-                }
-            ]
-        },
-        "type": "choice"
-    },
-    {
-        "content": "}\n\n}\n",
-        "type": "text"
-    }
+[  
+   {  
+      "span":{  
+         "start":[  
+            1,
+            1
+         ],
+         "end":[  
+            5,
+            9
+         ]
+      },
+      "content":"public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
+      "type":"text"
+   },
+   {  
+      "span":{  
+         "start":[  
+            5,
+            9
+         ],
+         "end":[  
+            10,
+            1
+         ]
+      },
+      "dimension":"HI",
+      "left":[  
+         {  
+            "span":{  
+               "start":[  
+                  6,
+                  1
+               ],
+               "end":[  
+                  7,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Hi\");\n        ",
+            "type":"text"
+         }
+      ],
+      "right":[  
+         {  
+            "span":{  
+               "start":[  
+                  8,
+                  1
+               ],
+               "end":[  
+                  9,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Hello, World\");\n        ",
+            "type":"text"
+         }
+      ],
+      "type":"choice"
+   },
+   {  
+      "span":{  
+         "start":[  
+            10,
+            1
+         ],
+         "end":[  
+            11,
+            9
+         ]
+      },
+      "content":"\n        ",
+      "type":"text"
+   },
+   {  
+      "span":{  
+         "start":[  
+            11,
+            9
+         ],
+         "end":[  
+            16,
+            1
+         ]
+      },
+      "dimension":"BYE",
+      "left":[  
+         {  
+            "span":{  
+               "start":[  
+                  12,
+                  1
+               ],
+               "end":[  
+                  13,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Bye\");\n        ",
+            "type":"text"
+         }
+      ],
+      "right":[  
+         {  
+            "span":{  
+               "start":[  
+                  14,
+                  1
+               ],
+               "end":[  
+                  15,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Goodbye, World\");\n        ",
+            "type":"text"
+         }
+      ],
+      "type":"choice"
+   },
+   {  
+      "span":{  
+         "start":[  
+            16,
+            1
+         ],
+         "end":[  
+            19,
+            1
+         ]
+      },
+      "content":"    }\n\n}\n",
+      "type":"text"
+   }
+][  
+   {  
+      "span":{  
+         "start":[  
+            1,
+            1
+         ],
+         "end":[  
+            5,
+            9
+         ]
+      },
+      "content":"public class HelloWorld {\n\n    public static void main(String[] args) {\n        // Prints \"Hello, World\" to the terminal window.\n        ",
+      "type":"text"
+   },
+   {  
+      "span":{  
+         "start":[  
+            5,
+            9
+         ],
+         "end":[  
+            10,
+            1
+         ]
+      },
+      "dimension":"HI",
+      "left":[  
+         {  
+            "span":{  
+               "start":[  
+                  6,
+                  1
+               ],
+               "end":[  
+                  7,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Hi\");\n        ",
+            "type":"text"
+         }
+      ],
+      "right":[  
+         {  
+            "span":{  
+               "start":[  
+                  8,
+                  1
+               ],
+               "end":[  
+                  9,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Hello, World\");\n        ",
+            "type":"text"
+         }
+      ],
+      "type":"choice"
+   },
+   {  
+      "span":{  
+         "start":[  
+            10,
+            1
+         ],
+         "end":[  
+            11,
+            9
+         ]
+      },
+      "content":"\n        ",
+      "type":"text"
+   },
+   {  
+      "span":{  
+         "start":[  
+            11,
+            9
+         ],
+         "end":[  
+            16,
+            1
+         ]
+      },
+      "dimension":"BYE",
+      "left":[  
+         {  
+            "span":{  
+               "start":[  
+                  12,
+                  1
+               ],
+               "end":[  
+                  13,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Bye\");\n        ",
+            "type":"text"
+         }
+      ],
+      "right":[  
+         {  
+            "span":{  
+               "start":[  
+                  14,
+                  1
+               ],
+               "end":[  
+                  15,
+                  9
+               ]
+            },
+            "content":"        System.out.println(\"Goodbye, World\");\n        ",
+            "type":"text"
+         }
+      ],
+      "type":"choice"
+   },
+   {  
+      "span":{  
+         "start":[  
+            16,
+            1
+         ],
+         "end":[  
+            19,
+            1
+         ]
+      },
+      "content":"    }\n\n}\n",
+      "type":"text"
+   }
 ]

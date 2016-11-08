@@ -2,11 +2,17 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         // Prints "Hello, World" to the terminal window.
-        #dimension HI
+        #dimension SHORT
         System.out.println("Hi");
         #else
         System.out.println("Hello, World");
+            #dimension BYE
+            System.out.println("Bye");
+            #else
+            System.out.println("Goodbye, World");
+            #end
         #end
+		
     }
 
 }
