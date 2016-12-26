@@ -17,28 +17,34 @@ import Data.Functor.Identity
 sc :: Parser ()
 sc = L.space (void spaceChar) empty empty
 
--- | Consume a reserved word w followed by a trailing whitespace character.
-rword :: String -> Parser ()
-rword w = do
-  string w
-  void spaceChar
-
 getLineCol :: ParsecT Dec String Identity LineCol
 getLineCol = fromSourcePos <$> getPosition
 
 -- | Parse the concrete choice syntax into Segment node in ast
-choiceSegment :: Parser Segment
-choiceSegment =
+doubleChoiceSegment :: Parser Segment
+doubleChoiceSegment =
   do start <- getLineCol
-     rword "#dimension" <?> "Choice keyword"
+     string "\n#ifdef" <?> "Choice keyword 2"
+     spaceChar
      name <- many alphaNumChar
-     char '\n'
      r1 <- region
-     rword "#else" <?> "Else keyword"
+     string "\n#else" <?> "Else keyword 2"
      r2 <- region
-     rword "#end" <?> "End keyword"
+     string "\n#endif" <?> "End keyword 2"
      end <- getLineCol
      return (ChoiceSeg $ Choice name r1 r2 (Span start end))
+  <?> "Choice node"
+
+singleChoiceSegment :: Parser Segment
+singleChoiceSegment =
+  do start <- getLineCol
+     string "\n#ifdef" <?> "Choice keyword 1"
+     spaceChar
+     name <- many alphaNumChar
+     r1 <- region
+     string "\n#endif" <?> "End keyword 1"
+     end <- getLineCol
+     return (ChoiceSeg $ Choice name r1 [] (Span start end))
   <?> "Choice node"
 
 -- | Parse input into string until a choice keyword is encountered
@@ -49,24 +55,24 @@ textSegment = do
   s <- someTill anyChar
     (lookAhead
       (choice
-        [void (string "#dimension" <?> "Choice lookahead")
-        , void (string "#else" <?> "Else lookahead")
-        , void (string "#end" <?> "End lookahead")
+        [void (string "\n#ifdef" <?> "Choice lookahead")
+        , void (string "\n#else" <?> "Else lookahead")
+        , void (string "\n#endif" <?> "End lookahead")
         , eof]))
   end <- getLineCol
   return (ContentSeg $ Content s (Span start end))
 
 -- | Parse either a choice or a text segment
 segment :: Parser Segment
-segment = choice [choiceSegment, textSegment]
+segment = choice [doubleChoiceSegment, singleChoiceSegment, textSegment]
 
 -- | Parse a series of segments (a region or a program
 region :: Parser [Segment]
 region = manyTill segment
   (lookAhead
     (choice
-      [void (string "#else" <?> "Else lookahead")
-      , void (string "#end" <?> "End lookahead")
+      [void (string "\n#else" <?> "Else lookahead")
+      , void (string "\n#endif" <?> "End lookahead")
       , eof]))
 
 -- | Main parser for variational programs.

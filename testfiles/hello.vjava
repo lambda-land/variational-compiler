@@ -1,18 +1,11 @@
-public class HelloWorld {
+int dummy() {
+  x = 10;
+#ifdef odd
 
-    public static void main(String[] args) {
-        // Prints "Hello, World" to the terminal window.
-        #dimension SHORT
-        System.out.println("Hi");
-        #else
-        System.out.println("Hello, World");
-            #dimension BYE
-            System.out.println("Bye");
-            #else
-            System.out.println("Goodbye, World");
-            #end
-        #end
-		
-    }
+  x = x + 1;
+#else
+  x = x + 2
+#endif
+  return x;
 
-}
+  }
