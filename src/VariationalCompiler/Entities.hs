@@ -7,15 +7,11 @@ import Text.Megaparsec
 
 -------- Abstract Syntax --------
 
-type LineCol = (Int, Int)
+type LineCol = (Int, Int) -- row, column
 
 fromSourcePos :: SourcePos -> LineCol
 fromSourcePos (SourcePos _ line column) =
-  (fromIntegral $ unPos line - 1, fromIntegral $ unPos column - 1)
-
-fromChoiceSourcePos :: SourcePos -> LineCol
-fromChoiceSourcePos (SourcePos _ line column) =
-  (fromIntegral $ unPos line, fromIntegral $ unPos column - 1)
+  (fromIntegral $ unPos line, fromIntegral $ unPos column)
 
 -- | Represents the position of a span of text in a source document.
 -- Indicates the part of a document a syntax node was parsed from.
@@ -32,8 +28,8 @@ data Segment = ChoiceSeg Choice
 
 data Choice = Choice
   { dimension :: String
-  , left :: [Segment]
-  , right :: [Segment]
+  , left :: Region
+  , right :: Region
   , span :: Span
   } deriving(Show, Generic)
 
@@ -42,7 +38,10 @@ data Content = Content
   , span :: Span
   } deriving(Show, Generic)
 
-
+data Region = Region
+  { segments :: [Segment]
+  , span :: Span
+  } deriving(Show, Generic)
 
 -------- View --------
 

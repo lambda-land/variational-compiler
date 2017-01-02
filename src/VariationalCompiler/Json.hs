@@ -46,6 +46,9 @@ instance ToJSON Segment where
     --toEncoding (ChoiceSeg co) = addTag "choice" (genericToEncoding defaultOptions co)
     --toEncoding (ContentSeg ch) = addTag "text" (genericToEncoding defaultOptions ch)
 
+instance ToJSON Region where
+  toJSON reg = addTag "region" (genericToJSON defaultOptions reg)
+
 instance ToJSON Alternative where
     toJSON LeftBranch = "left"
     toJSON RightBranch = "right"
@@ -64,6 +67,8 @@ instance FromJSON Alternative where
     parseJSON (String "left") = return LeftBranch
     parseJSON (String "right") = return RightBranch
     parseJSON v = typeMismatch "Only the strings \"left\" or \"right\" can decode into an Alternative value." v
+
+instance FromJSON Region
 
 instance FromJSON Projection where
     parseJSON = genericParseJSON defaultOptions

@@ -44,7 +44,7 @@ singleChoiceSegment =
      r1 <- region
      string "\n#endif" <?> "End keyword 1"
      end <- getLineCol
-     return (ChoiceSeg $ Choice name r1 [] (Span start end))
+     return (ChoiceSeg $ Choice name r1 (Region [] (Span end end)) (Span start end))
   <?> "Choice node"
 
 -- | Parse input into string until a choice keyword is encountered
@@ -64,17 +64,21 @@ textSegment = do
 
 -- | Parse either a choice or a text segment
 segment :: Parser Segment
-segment = choice [doubleChoiceSegment, singleChoiceSegment, textSegment]
+segment = choice [try doubleChoiceSegment <|> singleChoiceSegment, textSegment]
 
 -- | Parse a series of segments (a region or a program
-region :: Parser [Segment]
-region = manyTill segment
-  (lookAhead
-    (choice
-      [void (string "\n#else" <?> "Else lookahead")
-      , void (string "\n#endif" <?> "End lookahead")
-      , eof]))
+region :: Parser Region
+region = do
+  start <- getLineCol
+  segs <- manyTill segment
+    (lookAhead
+      (choice
+        [void (string "\n#else" <?> "Else lookahead")
+        , void (string "\n#endif" <?> "End lookahead")
+        , eof]))
+  end <- getLineCol
+  return (Region segs (Span start end))
 
 -- | Main parser for variational programs.
-program :: Parser [Segment]
+program :: Parser Region
 program = region
