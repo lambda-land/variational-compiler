@@ -27,7 +27,7 @@ data Segment = ChoiceSeg Choice
                deriving(Show)
 
 data Choice = Choice
-  { dimension :: String
+  { name :: String
   , left :: Region
   , right :: Region
   , span :: Span
@@ -51,7 +51,7 @@ data Alternative = LeftBranch | RightBranch
 
 -- | Represents a user's selection of a branch for all choices with a particular dimension.
 data Selection = Selection
-  { dimension :: String
+  { name :: String
   , alternative :: Alternative
   } deriving(Show, Generic)
 
