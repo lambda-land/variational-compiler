@@ -24,13 +24,13 @@ getLineCol = fromSourcePos <$> getPosition
 doubleChoiceSegment :: Parser Segment
 doubleChoiceSegment =
   do start <- getLineCol
-     string "\n#ifdef" <?> "Choice keyword 2"
+     string "#ifdef" <?> "Choice keyword 2"
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "\n#else" <?> "Else keyword 2"
+     string "#else" <?> "Else keyword 2"
      r2 <- region
-     string "\n#endif" <?> "End keyword 2"
+     string "#endif" <?> "End keyword 2"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "positive" r1 r2 (Span start end))
   <?> "Choice node"
@@ -38,11 +38,11 @@ doubleChoiceSegment =
 singleChoiceSegment :: Parser Segment
 singleChoiceSegment =
   do start <- getLineCol
-     string "\n#ifdef" <?> "Choice keyword 1"
+     string "#ifdef" <?> "Choice keyword 1"
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "\n#endif" <?> "End keyword 1"
+     string "#endif" <?> "End keyword 1"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "positive" r1 (Region [] (Span end end)) (Span start end))
   <?> "Choice node"
@@ -50,13 +50,13 @@ singleChoiceSegment =
 doubleContraChoiceSegment :: Parser Segment
 doubleContraChoiceSegment =
   do start <- getLineCol
-     string "\n#ifndef" <?> "Choice keyword 2"
+     string "#ifndef" <?> "Choice keyword 2"
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "\n#else" <?> "Else keyword 2"
+     string "#else" <?> "Else keyword 2"
      r2 <- region
-     string "\n#endif" <?> "End keyword 2"
+     string "#endif" <?> "End keyword 2"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "contrapositive" r1 r2 (Span start end))
   <?> "Choice node"
@@ -64,11 +64,11 @@ doubleContraChoiceSegment =
 singleContraChoiceSegment :: Parser Segment
 singleContraChoiceSegment =
   do start <- getLineCol
-     string "\n#ifndef" <?> "Choice keyword 1"
+     string "#ifndef" <?> "Choice keyword 1"
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "\n#endif" <?> "End keyword 1"
+     string "#endif" <?> "End keyword 1"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "contrapositive" r1 (Region [] (Span end end)) (Span start end))
   <?> "Choice node"
@@ -81,9 +81,9 @@ textSegment = do
   s <- someTill anyChar
     (lookAhead
       (choice
-        [void (string "\n#ifdef" <?> "Choice lookahead")
-        , void (string "\n#else" <?> "Else lookahead")
-        , void (string "\n#endif" <?> "End lookahead")
+        [void (string "#ifdef" <?> "Choice lookahead")
+        , void (string "#else" <?> "Else lookahead")
+        , void (string "#endif" <?> "End lookahead")
         , eof]))
   end <- getLineCol
   return (ContentSeg $ Content s (Span start end))
@@ -99,8 +99,8 @@ region = do
   segs <- manyTill segment
     (lookAhead
       (choice
-        [void (string "\n#else" <?> "Else lookahead")
-        , void (string "\n#endif" <?> "End lookahead")
+        [void (string "#else" <?> "Else lookahead")
+        , void (string "#endif" <?> "End lookahead")
         , eof]))
   end <- getLineCol
   return (Region segs (Span start end))
