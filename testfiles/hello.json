@@ -25,7 +25,7 @@
          ]
       },
       "name":"HI",
-      "left":[
+      "thenbranch":[
          {
             "span":{
                "start":[
@@ -41,7 +41,7 @@
             "type":"text"
          }
       ],
-      "right":[
+      "elsebranch":[
          {
             "span":{
                "start":[
@@ -85,7 +85,7 @@
          ]
       },
       "name":"BYE",
-      "left":[
+      "thenbranch":[
          {
             "span":{
                "start":[
@@ -101,7 +101,7 @@
             "type":"text"
          }
       ],
-      "right":[
+      "elsebranch":[
          {
             "span":{
                "start":[
@@ -160,7 +160,7 @@
          ]
       },
       "name":"HI",
-      "left":[
+      "thenbranch":[
          {
             "span":{
                "start":[
@@ -176,7 +176,7 @@
             "type":"text"
          }
       ],
-      "right":[
+      "elsebranch":[
          {
             "span":{
                "start":[
@@ -220,7 +220,7 @@
          ]
       },
       "name":"BYE",
-      "left":[
+      "thenbranch":[
          {
             "span":{
                "start":[
@@ -236,7 +236,7 @@
             "type":"text"
          }
       ],
-      "right":[
+      "elsebranch":[
          {
             "span":{
                "start":[

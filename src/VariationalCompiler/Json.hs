@@ -50,8 +50,8 @@ instance ToJSON Region where
   toJSON reg = addTag "region" (genericToJSON defaultOptions reg)
 
 instance ToJSON Alternative where
-    toJSON LeftBranch = "left"
-    toJSON RightBranch = "right"
+    toJSON RightBranch = "thenbranch"
+    toJSON LeftBranch = "elsebranch"
 
 instance FromJSON Span
 instance FromJSON Choice
@@ -64,9 +64,9 @@ instance FromJSON Segment where
       Nothing -> fail "Expected an object with a \"type\" field with the value \"choice\" or \"text\""
 
 instance FromJSON Alternative where
-    parseJSON (String "left") = return LeftBranch
-    parseJSON (String "right") = return RightBranch
-    parseJSON v = typeMismatch "Only the strings \"left\" or \"right\" can decode into an Alternative value." v
+    parseJSON (String "thenbranch") = return RightBranch
+    parseJSON (String "elsebranch") = return LeftBranch
+    parseJSON v = typeMismatch "Only the strings \"thenbranch\" or \"elsebranch\" can decode into an Alternative value." v
 
 instance FromJSON Region
 

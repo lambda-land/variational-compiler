@@ -32,7 +32,7 @@ doubleChoiceSegment =
      r2 <- region
      string "\n#endif" <?> "End keyword 2"
      end <- getLineCol
-     return (ChoiceSeg $ Choice name r1 r2 (Span start end))
+     return (ChoiceSeg $ Choice name "positive" r1 r2 (Span start end))
   <?> "Choice node"
 
 singleChoiceSegment :: Parser Segment
@@ -44,7 +44,33 @@ singleChoiceSegment =
      r1 <- region
      string "\n#endif" <?> "End keyword 1"
      end <- getLineCol
-     return (ChoiceSeg $ Choice name r1 (Region [] (Span end end)) (Span start end))
+     return (ChoiceSeg $ Choice name "positive" r1 (Region [] (Span end end)) (Span start end))
+  <?> "Choice node"
+
+doubleContraChoiceSegment :: Parser Segment
+doubleContraChoiceSegment =
+  do start <- getLineCol
+     string "\n#ifndef" <?> "Choice keyword 2"
+     spaceChar
+     name <- many alphaNumChar
+     r1 <- region
+     string "\n#else" <?> "Else keyword 2"
+     r2 <- region
+     string "\n#endif" <?> "End keyword 2"
+     end <- getLineCol
+     return (ChoiceSeg $ Choice name "contrapositive" r1 r2 (Span start end))
+  <?> "Choice node"
+
+singleContraChoiceSegment :: Parser Segment
+singleContraChoiceSegment =
+  do start <- getLineCol
+     string "\n#ifndef" <?> "Choice keyword 1"
+     spaceChar
+     name <- many alphaNumChar
+     r1 <- region
+     string "\n#endif" <?> "End keyword 1"
+     end <- getLineCol
+     return (ChoiceSeg $ Choice name "contrapositive" r1 (Region [] (Span end end)) (Span start end))
   <?> "Choice node"
 
 -- | Parse input into string until a choice keyword is encountered
@@ -64,7 +90,7 @@ textSegment = do
 
 -- | Parse either a choice or a text segment
 segment :: Parser Segment
-segment = choice [try doubleChoiceSegment <|> singleChoiceSegment, textSegment]
+segment = choice [try doubleChoiceSegment <|> singleChoiceSegment <|> doubleContraChoiceSegment <|> singleContraChoiceSegment, textSegment]
 
 -- | Parse a series of segments (a region or a program
 region :: Parser Region

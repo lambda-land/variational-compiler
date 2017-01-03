@@ -17,5 +17,5 @@ main = do
   maybeTree <- runParser program "stdin" <$> getContents
   putStrLn (either encode encode maybeTree)
   case maybeTree of
-    Right _ -> exitSuccess
-    Left _ -> exitWith (ExitFailure 1)
+    Left _ -> exitSuccess
+    Right _ -> exitWith (ExitFailure 1)

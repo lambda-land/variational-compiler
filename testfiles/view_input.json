@@ -26,7 +26,7 @@
           ]
         },
         "name": "HI",
-        "left": [
+        "thenbranch": [
           {
             "span": {
               "start": [
@@ -42,7 +42,7 @@
             "type": "text"
           }
         ],
-        "right": [
+        "elsebranch": [
           {
             "span": {
               "start": [
@@ -77,6 +77,6 @@
     ]
     ,
     "selections": [
-      { "name": "HI", "alternative": "left" }
+      { "name": "HI", "alternative": "thenbranch" }
     ]
   }
