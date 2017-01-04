@@ -28,24 +28,20 @@ doubleChoiceSegment =
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "#else" <?> "Else keyword 2"
-     r2 <- region
+     r2 <- elseBranch
      string "#endif" <?> "End keyword 2"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "positive" r1 r2 (Span start end))
   <?> "Choice node"
 
-singleChoiceSegment :: Parser Segment
-singleChoiceSegment =
-  do start <- getLineCol
-     string "#ifdef" <?> "Choice keyword 1"
-     spaceChar
-     name <- many alphaNumChar
-     r1 <- region
-     string "#endif" <?> "End keyword 1"
-     end <- getLineCol
-     return (ChoiceSeg $ Choice name "positive" r1 (Region [] (Span end end)) (Span start end))
-  <?> "Choice node"
+elseBranch :: Parser Region
+elseBranch =
+  try (
+    do string "#else" <?> "Else keyword"
+       region
+  ) <|> (
+    do start <- getLineCol
+       return (Region [] (Span start start)))
 
 doubleContraChoiceSegment :: Parser Segment
 doubleContraChoiceSegment =
@@ -54,23 +50,10 @@ doubleContraChoiceSegment =
      spaceChar
      name <- many alphaNumChar
      r1 <- region
-     string "#else" <?> "Else keyword 2"
-     r2 <- region
+     r2 <- elseBranch
      string "#endif" <?> "End keyword 2"
      end <- getLineCol
      return (ChoiceSeg $ Choice name "contrapositive" r1 r2 (Span start end))
-  <?> "Choice node"
-
-singleContraChoiceSegment :: Parser Segment
-singleContraChoiceSegment =
-  do start <- getLineCol
-     string "#ifndef" <?> "Choice keyword 1"
-     spaceChar
-     name <- many alphaNumChar
-     r1 <- region
-     string "#endif" <?> "End keyword 1"
-     end <- getLineCol
-     return (ChoiceSeg $ Choice name "contrapositive" r1 (Region [] (Span end end)) (Span start end))
   <?> "Choice node"
 
 -- | Parse input into string until a choice keyword is encountered
@@ -82,6 +65,7 @@ textSegment = do
     (lookAhead
       (choice
         [void (string "#ifdef" <?> "Choice lookahead")
+        , void (string "#ifndef" <?> "Negative Choice lookahead")
         , void (string "#else" <?> "Else lookahead")
         , void (string "#endif" <?> "End lookahead")
         , eof]))
@@ -90,7 +74,7 @@ textSegment = do
 
 -- | Parse either a choice or a text segment
 segment :: Parser Segment
-segment = choice [try doubleChoiceSegment <|> singleChoiceSegment <|> doubleContraChoiceSegment <|> singleContraChoiceSegment, textSegment]
+segment = choice [try doubleChoiceSegment <|> doubleContraChoiceSegment, textSegment]
 
 -- | Parse a series of segments (a region or a program
 region :: Parser Region
