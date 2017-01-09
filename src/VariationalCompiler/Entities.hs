@@ -28,7 +28,7 @@ data Segment = ChoiceSeg Choice
 
 data Choice = Choice
   { name :: String
-  , kind :: String
+  , kind :: ChoiceKind
   , thenbranch :: Region
   , elsebranch :: Region
   , span :: Span
@@ -48,6 +48,9 @@ data Region = Region
 
 -- | Represents one of the branches of a choice.
 data Alternative = RightBranch | LeftBranch
+  deriving(Show)
+
+data ChoiceKind = Positive | Contrapositive
   deriving(Show)
 
 -- | Represents a user's selection of a branch for all choices with a particular dimension.

@@ -53,6 +53,10 @@ instance ToJSON Alternative where
     toJSON RightBranch = "thenbranch"
     toJSON LeftBranch = "elsebranch"
 
+instance ToJSON ChoiceKind where
+    toJSON Positive = "positive"
+    toJSON Contrapositive = "contrapositive"
+
 instance FromJSON Span
 instance FromJSON Choice
 instance FromJSON Content
@@ -67,6 +71,11 @@ instance FromJSON Alternative where
     parseJSON (String "thenbranch") = return RightBranch
     parseJSON (String "elsebranch") = return LeftBranch
     parseJSON v = typeMismatch "Only the strings \"thenbranch\" or \"elsebranch\" can decode into an Alternative value." v
+
+instance FromJSON ChoiceKind where
+    parseJSON (String "positive") = return Positive
+    parseJSON (String "contrapositive") = return Contrapositive
+    parseJSON v = typeMismatch "Only the strings \"positive\" or \"contrapositive\" can decode into a ChoiceKind value." v
 
 instance FromJSON Region
 
