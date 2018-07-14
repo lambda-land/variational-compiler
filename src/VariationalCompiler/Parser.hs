@@ -27,11 +27,9 @@ choiceSegment =
      ck <- choiceKind
      spaceChar
      name <- many alphaNumChar
-     n2 <- newline
      r1 <- region
      r2 <- elseBranch
-     n2 <- newline
-     string "\n#endif" <?> "string \"\\n#endif\" in choiceSegment"
+     string "#endif" <?> "string \"#endif\" in choiceSegment"
      end <- getLineCol
      return (ChoiceSeg $ Choice name ck r1 r2 (Span start end))
   <?> "Choice node"
@@ -39,17 +37,17 @@ choiceSegment =
 choiceKind :: Parser ChoiceKind
 choiceKind =
   try (
-    do string "\n#ifdef" <?> "string \"\\n#ifdef\" in choiceKind"
+    do string "#ifdef" <?> "string \"#ifdef\" in choiceKind"
        return Positive
   ) <|> (
-    do string "\n#ifndef" <?> "string \"\\n#ifndef\" in choiceKind"
+    do string "#ifndef" <?> "string \"#ifndef\" in choiceKind"
        return Contrapositive
   )
 
 elseBranch :: Parser Region
 elseBranch =
   try (
-    do string "\n#else"
+    do string "#else"
        region
   ) <|> (
     do start <- getLineCol
@@ -63,10 +61,10 @@ textSegment = do
   s <- someTill anyChar
     (lookAhead
       (choice
-        [void (string "\n#ifdef" <?> "string \"\\n#ifdef\" in textSegment")
-        , void (string "\n#ifndef" <?> "string \"\\n#ifndef\" in textSegment")
-        , void (string "\n#else" <?> "string \"\\n#else\" in textSegment")
-        , void (string "\n#endif" <?> "string \"\\n#endif\" in textSegment")
+        [void (string "#ifdef" <?> "string \"#ifdef\" in textSegment")
+        , void (string "#ifndef" <?> "string \"#ifndef\" in textSegment")
+        , void (string "#else" <?> "string \"#else\" in textSegment")
+        , void (string "#endif" <?> "string \"#endif\" in textSegment")
         , eof]))
   end <- getLineCol
   return (ContentSeg $ Content s (Span start end))
@@ -82,8 +80,8 @@ region = do
   segs <- manyTill segment
     (lookAhead
       (choice
-        [void (string "\n#else" <?> "string \"\\n#else\" in region")
-        , void (string "\n#endif" <?> "string \"\\n#endif\" in region")
+        [void (string "#else" <?> "string \"#else\" in region")
+        , void (string "#endif" <?> "string \"#endif\" in region")
         , eof]))
   end <- getLineCol
   return (Region segs (Span start end))
