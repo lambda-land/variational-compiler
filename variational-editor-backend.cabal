@@ -1,7 +1,7 @@
-name:                variational-compiler
+name:                variational-editor-backend
 version:             0.1.0.0
 synopsis:            Compiler for text files with variational constructs
-homepage:            https://github.com/rikkigibson/variational-compiler
+homepage:            https://github.com/lambda-land/variational-editor-backend
 license:             MIT
 author:              Rikki Gibson and Cody Ray Hoeft
 maintainer:          rikkigibson@gmail.com
@@ -11,13 +11,18 @@ cabal-version:       >= 1.24
 
 source-repository head
   type:     git
-  location: https://github.com/rikkigibson/variational-compiler
+  location: https://github.com/lambda-land/variational-editor-backend
   branch:   master
 
 executable variational-parser
   hs-source-dirs:      src
   main-is:             Parser.hs
   default-language:    Haskell2010
+  other-modules:
+        VariationalCompiler.Entities
+        VariationalCompiler.Json
+        VariationalCompiler.Parser
+
   build-depends:
     base,
     aeson,
